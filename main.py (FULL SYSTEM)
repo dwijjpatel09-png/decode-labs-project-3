@@ -1,0 +1,58 @@
+import matplotlib.pyplot as plt
+
+from config import GRID_SIZE, START, GOAL, OBSTACLES
+from grid_map import GridMap
+from pathfinding import a_star
+from lidar import get_lidar_readings
+
+# ------------------
+# INIT MAP
+# ------------------
+
+grid = GridMap(GRID_SIZE)
+
+for obs in OBSTACLES:
+    grid.add_obstacle(*obs)
+
+# ------------------
+# SIMULATE LIDAR
+# ------------------
+
+robot_pos = START
+
+detected = get_lidar_readings(robot_pos, OBSTACLES)
+
+for d in detected:
+    grid.add_obstacle(*d)
+
+# ------------------
+# PATH PLANNING
+# ------------------
+
+path = a_star(START, GOAL, grid.grid)
+
+# ------------------
+# VISUALIZATION
+# ------------------
+
+plt.figure(figsize=(6, 6))
+
+# draw grid
+for i in range(GRID_SIZE):
+    for j in range(GRID_SIZE):
+        if grid.grid[i][j] == 1:
+            plt.scatter(i, j, c="black")
+
+# draw path
+if path:
+    px, py = zip(*path)
+    plt.plot(px, py, c="blue")
+
+# start & goal
+plt.scatter(*START, c="green", s=100, label="START")
+plt.scatter(*GOAL, c="red", s=100, label="GOAL")
+
+plt.title("Autonomous Mobile Robot - A* Navigation")
+plt.legend()
+plt.grid()
+plt.show()
