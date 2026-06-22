@@ -1,0 +1,13 @@
+import random
+
+def get_lidar_readings(position, obstacles, max_range=3):
+    x, y = position
+    detected = []
+
+    for dx in range(-max_range, max_range + 1):
+        for dy in range(-max_range, max_range + 1):
+            nx, ny = x + dx, y + dy
+            if (nx, ny) in obstacles:
+                detected.append((nx, ny))
+
+    return detected
